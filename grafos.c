@@ -47,7 +47,8 @@ void adicionar_aresta(GRAFO *grafo, int origem, int destino) {
         grafo->matriz_adj[destino][origem] = 1;
     }
 
-    // atualizando lista de adjacencias
+    // atualiza lista de adjacencias
+    // ToDo IMPLEMENT ME!
 
 }
 
