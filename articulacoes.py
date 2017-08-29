@@ -39,8 +39,10 @@ def busca_profundidade(G, raiz):
                 pai[w] = v
                 busca_prof(w)
                 # visite aresta de arvore (v,w)
+                print("Visitando aresta de arvore %d,%d" % (v,w))
             else:
-                if prof_saida[w] is None and pai[w] != v:
+                if prof_saida[w] is None and pai[v] != w:
+                    print("Visitando aresta de retorno %d,%d" % (v,w))
                     # visite aresta de retorno (v,w)
                     pass
 
