@@ -15,12 +15,16 @@ def adicionar_aresta(G, vertice1, vertice2):
     G[vertice2].append(vertice1)
 
 
-def busca_profundidade(G, raiz):
+def determinar_articulacoes(G):
     n = len(G) - 1
     pai = [None] * (n+1)
     prof_entrada = [None] * (n+1)
     prof_saida = [None] * (n+1)
+    raiz = 1
     pai[raiz] = raiz
+    low = [None] + [j for j in range(1, n+1)]
+    demarcador = [None] + [False] * n
+    articulacao = [None] + [False] * n
     global pe
     global ps
     pe = 1
@@ -38,23 +42,43 @@ def busca_profundidade(G, raiz):
             if pai[w] is None:
                 pai[w] = v
                 busca_prof(w)
+
                 # visite aresta de arvore (v,w)
-                print("Visitando aresta de arvore %d,%d" % (v,w))
+                print("visita aresta de arvore %d,%d" % (v,w))
+                if prof_entrada[low[w]] < prof_entrada[low[v]]:
+                    low[v] = low[w]
+                if demarcador[w] == True and v != raiz:
+                    articulacao[v] = True
             else:
                 if prof_saida[w] is None and pai[v] != w:
-                    print("Visitando aresta de retorno %d,%d" % (v,w))
                     # visite aresta de retorno (v,w)
-                    pass
+                    print("visita aresta de retorno %d,%d" % (v,w))
+                    if prof_entrada[w] < prof_entrada[low[v]]:
+                        low[v] = w
 
         prof_saida[v] = ps
         ps = ps + 1
-    # ---------
+        if low[v] == v or low[v] == pai[v]:
+            demarcador[v] = True
+            
+    # --------
 
     # faz a chamada original ao busca_prof()
     busca_prof(raiz)
+
+    cont_filhos_raiz = 0
+    for v in range(1, n+1):
+        if v != raiz and pai[v] == raiz:
+            cont_filhos_raiz += 1
+    if cont_filhos_raiz >= 2:
+        articulacao[raiz] = True
+
+    lista_articulacoes = []
+    for v in range(1, n+1):
+        if articulacao[v] == True:
+            lista_articulacoes.append(v)
     
-    return pai, prof_entrada, prof_saida                
-            
+    return lista_articulacoes
     
 # Main
 
