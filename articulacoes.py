@@ -17,6 +17,8 @@ def adicionar_aresta(G, vertice1, vertice2):
 
 def determinar_articulacoes(G):
     n = len(G) - 1
+    pilha_descendentes = []
+    lista_componentes = []
     pai = [None] * (n+1)
     prof_entrada = [None] * (n+1)
     prof_saida = [None] * (n+1)
@@ -30,6 +32,15 @@ def determinar_articulacoes(G):
     pe = 1
     ps = 1
 
+    def determina_componente(pai, demarc):
+        componente = [pai]
+        while True:
+            elemento = pilha_descendentes.pop()
+            componente.append(elemento)
+            if elemento == demarc:
+                break
+        return componente
+        
     def busca_prof(v):
         global pe
         global ps
@@ -37,6 +48,7 @@ def determinar_articulacoes(G):
         # visite o vertice v
         prof_entrada[v] = pe
         pe = pe + 1
+        pilha_descendentes.append(v)
 
         for w in G[v]:
             if pai[w] is None:
@@ -47,8 +59,11 @@ def determinar_articulacoes(G):
                 print("visita aresta de arvore %d,%d" % (v,w))
                 if prof_entrada[low[w]] < prof_entrada[low[v]]:
                     low[v] = low[w]
-                if demarcador[w] == True and v != raiz:
-                    articulacao[v] = True
+                if demarcador[w] == True:
+                    componente_biconexa = determina_componente(v, w)
+                    lista_componentes.append(componente_biconexa)
+                    if v != raiz:
+                        articulacao[v] = True
             else:
                 if prof_saida[w] is None and pai[v] != w:
                     # visite aresta de retorno (v,w)
@@ -78,7 +93,7 @@ def determinar_articulacoes(G):
         if articulacao[v] == True:
             lista_articulacoes.append(v)
     
-    return lista_articulacoes
+    return lista_articulacoes, lista_componentes
     
 # Main
 
@@ -92,6 +107,12 @@ arestas = [(1,2),
            (1,5)]
 for aresta in arestas:
     adicionar_aresta(grafo, aresta[0], aresta[1])
+
+articulacoes, componentes = determinar_articulacoes(grafo)
+
+print("\narticulacoes\n", articulacoes)
+print("\ncomponentes\n", componentes)
+
 
 
 
